@@ -73,8 +73,6 @@ void (*exe_op_func(char *opcode))(stack_t**, unsigned int)
 		{"pint", func_pint},
 		{"pop", func_pop},
 		{"swap", func_swap},
-		{"add", func_add},
-		{"nop", func_nop},
 		{NULL, NULL}
 	};
 	int index;

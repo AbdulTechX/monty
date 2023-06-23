@@ -70,4 +70,6 @@ int usage_error(void);
 int no_int_error(unsigned int line_number);
 int f_open_error(char *file);
 int pint_error(unsigned int line_number);
+int short_stack_error(unsigned int line_number, char *operation);
+int pop_error(unsigned int line_number);
 #endif
