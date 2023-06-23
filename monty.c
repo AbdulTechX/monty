@@ -4,7 +4,6 @@
 #include <fcntl.h>
 
 char **op_tokenise = NULL;
-
 /**
  * main - the entry point for Monty Interp
  *

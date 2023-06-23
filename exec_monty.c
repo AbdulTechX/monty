@@ -5,7 +5,7 @@ void free_content(void);
 
 
 /**
- * free_tokens - Frees the global op_tokines array of strings.
+ * free_content - Frees the global op_tokines array of strings.
  */
 void free_content(void)
 {
