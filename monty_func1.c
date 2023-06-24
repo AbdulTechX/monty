@@ -1,134 +1,105 @@
 #include "monty.h"
 
+void f_push(stack_t **stack, unsigned int line_number);
+void f_pall(stack_t **stack, unsigned int line_number);
+void f_pint(stack_t **stack, unsigned int line_number);
+void f_pop(stack_t **stack, unsigned int line_number);
 
 /**
- * func_push - Push the value to a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void func_push(stack_t **stack, unsigned int line_number)
+ * f_push - add node to the stack
+ * @stack: stack head
+ * @line_number: line_number
+ * Return: no return
+*/
+void f_push(stack_t **stack, unsigned int line_number)
 {
-	stack_t *tmp_node, *new_node;
-	int index;
+	int n, j = 0, flag = 0;
 
-	new_node = malloc(sizeof(stack_t));
-	if (new_node == NULL)
+	if (monty.arg)
 	{
-		set_op_tok_error(malloc_error());
-		return;
-	}
-
-	if (op_tokenise[1] == NULL)
-	{
-		set_op_tok_error(no_int_error(line_number));
-		return;
-	}
-
-	for (index = 0; op_tokenise[1][index]; index++)
-	{
-		if (op_tokenise[1][index] == '-' && index == 0)
-			continue;
-		if (op_tokenise[1][index] < '0' || op_tokenise[1][index] > '9')
+		if (monty.arg[0] == '-')
+			j++;
+		for (; monty.arg[j] != '\0'; j++)
 		{
-			set_op_tok_error(no_int_error(line_number));
-			return;
-		}
-	}
-	new_node->n = atoi(op_tokenise[1]);
-
-	if (check_mode(*stack) == STACK) /* STACK mode insert at front */
-	{
-		tmp_node = (*stack)->next;
-		new_node->prev = *stack;
-		new_node->next = tmp_node;
-		if (tmp_node)
-			tmp_node->prev = new_node;
-		(*stack)->next = new_node;
-	}
-	else /* QUEUE mode insert at end */
-	{
-		tmp_node = *stack;
-		while (tmp_node->next)
-			tmp_node = tmp_node->next;
-		new_node->prev = tmp_node;
-		new_node->next = NULL;
-		tmp_node->next = new_node;
-	}
+			if (monty.arg[j] > 57 || monty.arg[j] < 48)
+				flag = 1; }
+		if (flag == 1)
+		{ fprintf(stderr, "L%d: usage: push integer\n", line_number);
+			fclose(monty.monty_file);
+			free(monty.op);
+			free_stack(*stack);
+			exit(EXIT_FAILURE); }}
+	else
+	{ fprintf(stderr, "L%d: usage: push integer\n", line_number);
+		fclose(monty.monty_file);
+		free(monty.op);
+		free_stack(*stack);
+		exit(EXIT_FAILURE); }
+	n = atoi(monty.arg);
+	if (monty.lifi == 0)
+		addnode(stack, n);
+	else
+		addqueue(stack, n);
 }
-/**
- * func_pall - Prints the values of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void func_pall(stack_t **stack, unsigned int line_number)
-{
-	stack_t *tmp_node = (*stack)->next;
 
-	while (tmp_node)
-	{
-		printf("%d\n", tmp_node->n);
-		tmp_node = tmp_node->next;
-	}
+/**
+ * f_pall - prints the stack
+ * @stack: stack head
+ * @line_number: no used
+ * Return: no return
+*/
+void f_pall(stack_t **stack, unsigned int line_number)
+{
+	stack_t *head;
 	(void)line_number;
-}
-/**
- * func_pint - Prints the top value of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void func_pint(stack_t **stack, unsigned int line_number)
-{
-	if ((*stack)->next == NULL)
-	{
-		set_op_tok_error(pint_error(line_number));
+
+	head = *stack;
+	if (head == NULL)
 		return;
-	}
-
-	printf("%d\n", (*stack)->next->n);
-}
-/**
- * func_pop - Removes the top value element of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void func_pop(stack_t **stack, unsigned int line_number)
-{
-	stack_t *next = NULL;
-
-	if ((*stack)->next == NULL)
+	while (head)
 	{
-		set_op_tok_error(pop_error(line_number));
-		return;
+		printf("%d\n", head->n);
+		head = head->next;
 	}
-
-	next = (*stack)->next->next;
-	free((*stack)->next);
-	if (next)
-		next->prev = *stack;
-	(*stack)->next = next;
 }
 
 /**
- * func_swap - Swaps the top two value elements of a stack_t linked list.
- * @stack: A pointer to the top mode node of a stack_t linked list.
- * @line_number: The current working line number of a Monty bytecodes file.
- */
-void func_swap(stack_t **stack, unsigned int line_number)
+ * f_pint - prints the top
+ * @stack: stack head
+ * @line_number: line_number
+ * Return: no return
+*/
+void f_pint(stack_t **stack, unsigned int line_number)
 {
-	stack_t *tmp_node;
-
-	if ((*stack)->next == NULL || (*stack)->next->next == NULL)
+	if (*stack == NULL)
 	{
-		set_op_tok_error(short_stack_error(line_number, "swap"));
-		return;
+		fprintf(stderr, "L%u: can't pint, stack empty\n", line_number);
+		fclose(monty.monty_file);
+		free(monty.op);
+		free_stack(*stack);
+		exit(EXIT_FAILURE);
 	}
+	printf("%d\n", (*stack)->n);
+}
+/**
+ * f_pop - prints the top
+ * @stack: stack head
+ * @line_number: line_number
+ * Return: no return
+*/
+void f_pop(stack_t **stack, unsigned int line_number)
+{
+	stack_t *head;
 
-	tmp_node = (*stack)->next->next;
-	(*stack)->next->next = tmp_node->next;
-	(*stack)->next->prev = tmp_node;
-	if (tmp_node->next)
-		tmp_node->next->prev = (*stack)->next;
-	tmp_node->next = (*stack)->next;
-	tmp_node->prev = *stack;
-	(*stack)->next = tmp_node;
+	if (*stack == NULL)
+	{
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
+		fclose(monty.monty_file);
+		free(monty.op);
+		free_stack(*stack);
+		exit(EXIT_FAILURE);
+	}
+	head = *stack;
+	*stack = head->next;
+	free(head);
 }
