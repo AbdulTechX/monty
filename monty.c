@@ -1,4 +1,5 @@
 #include "monty.h"
+#include <string.h>
 
 monty_t monty = {NULL, NULL, NULL, 0};
 
