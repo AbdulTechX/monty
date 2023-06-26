@@ -63,5 +63,9 @@ void free_stack(stack_t *stack);
 void f_pop(stack_t **stack, unsigned int line_number);
 void addnode(stack_t **stack, int n);
 void addqueue(stack_t **stack, int n);
+void f_swap(stack_t **stack, unsigned int line_number);
+void f_add(stack_t **stack, unsigned int line_number);
+void f_nop(stack_t **stack, unsigned int line_number);
+void f_sub(stack_t **stack, unsigned int line_number);
 
 #endif
